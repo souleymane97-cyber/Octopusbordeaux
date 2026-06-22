@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ED0080">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Octopus Énergie — Équipe Bordeaux</title>
+<style>
+  :root{
+    --pink:#ED0080; --pink-dark:#C2006A; --pink-glow:#FF2E92;
+    --ink:#FFFFFF; --ink-soft:#C7C3DE;
+    --bg:#0B0820; --bg2:#120D2E; --card:#160F38; --line:#2B2459; --muted:#8E89AC;
+    --green:#1FD67A; --green-bg:rgba(31,214,122,.12); --amber:#FFB23E; --amber-bg:rgba(255,178,62,.12);
+    --red:#FF5470; --red-bg:rgba(255,84,112,.12); --blue:#4FA3FF;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 28px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg); color:var(--ink);
+    -webkit-font-smoothing:antialiased; line-height:1.45;
+  }
+  h1,h2,h3{margin:0;letter-spacing:-.02em;font-weight:800}
+  button{font-family:inherit;cursor:pointer;border:none}
+  input,select,textarea{font-family:inherit;font-size:16px}
+  .hidden{display:none!important}
+
+  /* ---------- LOGIN ---------- */
+  #login{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;
+    background:radial-gradient(900px 500px at 50% -10%,rgba(237,0,128,.35) 0%,var(--bg) 60%)}
+  .login-card{background:var(--card);border-radius:24px;box-shadow:var(--shadow);
+    padding:32px 26px;width:100%;max-width:380px;border:1px solid var(--line)}
+  .logo{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .logo .dot{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--pink-glow),var(--pink-dark));
+    display:grid;place-items:center;color:#fff;font-weight:800;font-size:20px;box-shadow:0 4px 14px rgba(237,0,128,.45)}
+  .logo b{font-size:18px;color:#fff}
+  .login-card .sub{color:var(--muted);font-size:14px;margin:4px 0 22px}
+  label{display:block;font-size:13px;font-weight:700;color:var(--ink-soft);margin:14px 0 6px}
+  .field{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:13px;
+    background:var(--bg2);color:#fff;outline:none;transition:border .15s}
+  .field::placeholder{color:var(--muted)}
+  .field:focus{border-color:var(--pink)}
+  .btn{width:100%;padding:14px;border-radius:13px;background:linear-gradient(135deg,var(--pink-glow),var(--pink) 55%,var(--pink-dark));color:#fff;
+    font-weight:800;font-size:15px;margin-top:20px;transition:transform .08s,background .15s;box-shadow:0 6px 18px rgba(237,0,128,.4)}
+  .btn:active{transform:scale(.985)}
+  .btn.secondary{background:var(--bg2);color:#fff;border:1.5px solid var(--line)}
+  .btn.ghost{background:transparent;color:var(--pink);box-shadow:none;margin-top:8px}
+  .err{color:var(--red);font-size:13px;font-weight:700;margin-top:12px;text-align:center}
+
+  /* ---------- APP SHELL ---------- */
+  #app{max-width:680px;margin:0 auto;padding:0 0 96px}
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(11,8,32,.92);
+    backdrop-filter:blur(10px);padding:16px 18px 14px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .topbar .who{font-size:13px;color:var(--muted)}
+  .topbar h2{font-size:20px;color:#fff}
+  .pill{font-size:11px;font-weight:800;padding:4px 9px;border-radius:999px;
+    background:rgba(237,0,128,.18);color:var(--pink-glow);text-transform:uppercase;letter-spacing:.04em;
+    border:1px solid rgba(237,0,128,.4)}
+  .logout{background:var(--bg2);border:1.5px solid var(--line);border-radius:11px;
+    padding:8px 11px;font-weight:700;font-size:13px;color:#fff}
+  .view{padding:6px 18px}
+
+  .card{background:linear-gradient(180deg,var(--card),var(--bg2));border-radius:20px;box-shadow:var(--shadow);
+    padding:18px;margin-bottom:14px;border:1px solid var(--line)}
+  .card h3{font-size:15px;margin-bottom:12px;color:#fff}
+  .row{display:flex;gap:12px}
+  .row>*{flex:1}
+
+  /* objective ring */
+  .obj-wrap{display:flex;align-items:center;gap:18px}
+  .ring{position:relative;width:96px;height:96px;flex:none}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .val{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:20px;color:#fff}
+  .obj-meta .big{font-size:13px;color:var(--muted);font-weight:700}
+  .obj-meta .num{font-size:30px;font-weight:800;line-height:1.1;color:#fff}
+  .obj-meta .num span{font-size:16px;color:var(--muted)}
+
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .stat{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+  .stat:first-child{background:linear-gradient(135deg,var(--pink-glow),var(--pink-dark));border-color:transparent}
+  .stat:first-child .n,.stat:first-child .l{color:#fff}
+  .stat .n{font-size:24px;font-weight:800;color:#fff}
+  .stat .l{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+
+  .person{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .person:last-child{border-bottom:none}
+  .avatar{width:42px;height:42px;border-radius:12px;background:rgba(237,0,128,.18);color:var(--pink-glow);
+    display:grid;place-items:center;font-weight:800;flex:none}
+  .person .info{flex:1;min-width:0}
+  .person .info b{display:block;font-size:15px;color:#fff}
+  .person .info small{color:var(--muted);font-size:12px}
+  .person .score{text-align:right;font-weight:800;font-size:18px;color:#fff}
+  .person .score small{display:block;font-size:11px;color:var(--muted);font-weight:700}
+
+  .bar{height:8px;border-radius:99px;background:var(--bg2);overflow:hidden;margin-top:6px;border:1px solid var(--line)}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pink-glow),var(--pink));border-radius:99px}
+
+  .podium{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin-top:6px}
+  .pod{flex:1;max-width:120px;text-align:center}
+  .pod .av{width:50px;height:50px;border-radius:14px;margin:0 auto 6px;display:grid;place-items:center;
+    font-weight:800;font-size:17px;color:#fff}
+  .pod .nm{font-size:12.5px;font-weight:800;line-height:1.2;min-height:30px;color:#fff}
+  .pod .sc{font-size:13px;color:var(--muted);font-weight:700}
+  .pod .stand{margin-top:8px;border-radius:12px 12px 0 0;display:grid;place-items:center;
+    font-size:22px;color:#fff;font-weight:800}
+  .pod.g .av{background:#E0A400;box-shadow:0 0 18px rgba(224,164,0,.5)} .pod.g .stand{background:linear-gradient(#FFCB2E,#E0A400);height:74px}
+  .pod.s .av{background:#9AA3AE} .pod.s .stand{background:linear-gradient(#C3CBD4,#9AA3AE);height:56px}
+  .pod.b .av{background:#C77B43} .pod.b .stand{background:linear-gradient(#E0975A,#C77B43);height:42px}
+
+  .tag{display:inline-block;font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px}
+  .t-val{background:var(--green-bg);color:var(--green)}
+  .t-att{background:var(--amber-bg);color:var(--amber)}
+  .t-ref{background:var(--red-bg);color:var(--red)}
+  .t-gaz{background:rgba(255,178,62,.15);color:var(--amber)}
+  .t-elec{background:rgba(79,163,255,.15);color:var(--blue)}
+
+  .contract{padding:13px 0;border-bottom:1px solid var(--line)}
+  .contract:last-child{border-bottom:none}
+  .contract .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .contract b{font-size:15px;color:#fff}
+  .contract .meta{font-size:12px;color:var(--muted);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+  .filters{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;-webkit-overflow-scrolling:touch}
+  .chip{flex:none;border:1.5px solid var(--line);background:var(--bg2);border-radius:99px;
+    padding:7px 13px;font-weight:700;font-size:13px;color:var(--ink-soft)}
+  .chip.on{background:var(--pink);color:#fff;border-color:var(--pink)}
+
+  .msg{padding:12px 0;border-bottom:1px solid var(--line)}
+  .msg:last-child{border-bottom:none}
+  .msg .h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .msg .h b{font-size:14px;color:#fff}
+  .msg .h small{color:var(--muted);font-size:11px;flex:none}
+  .msg p{margin:4px 0 0;font-size:14px;white-space:pre-wrap;color:var(--ink-soft)}
+
+  .day{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .day:last-child{border-bottom:none}
+  .day .d{width:30px;flex:none;font-weight:800;text-align:center;font-size:14px;color:#fff}
+  .day.repos .d{color:var(--muted)}
+  .day .v{flex:1;font-size:13px;color:var(--ink-soft)}
+  .day.repos .v{color:var(--muted)}
+  .day.repos{opacity:.7}
+
+  .small-btn{background:var(--bg2);border:1.5px solid var(--line);border-radius:10px;
+    padding:8px 11px;font-weight:700;font-size:13px;color:#fff}
+  .small-btn.danger{color:var(--red);border-color:rgba(255,84,112,.35)}
+  .add-link{color:var(--pink-glow);font-weight:800;font-size:14px;background:none;padding:0;margin-top:8px}
+
+  /* nav */
+  .nav{position:fixed;bottom:0;left:0;right:0;z-index:40;background:rgba(11,8,32,.94);
+    backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));max-width:680px;margin:0 auto}
+  .nav button{flex:1;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:6px 2px;color:var(--muted);font-size:10.5px;font-weight:700}
+  .nav button.on{color:var(--pink-glow)}
+  .nav svg{width:22px;height:22px}
+
+  /* modal */
+  .overlay{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.6);
+    display:flex;align-items:flex-end;justify-content:center}
+  .sheet{background:var(--card);width:100%;max-width:680px;border-radius:22px 22px 0 0;
+    padding:22px 20px calc(22px + env(safe-area-inset-bottom));max-height:90dvh;overflow:auto;
+    animation:up .22s ease;border-top:1px solid var(--line)}
+  @keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:translateY(0);opacity:1}}
+  .sheet h3{font-size:18px;margin-bottom:4px;color:#fff}
+  .sheet .close{position:absolute}
+  .sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .x{background:var(--bg2);border-radius:10px;width:34px;height:34px;font-size:18px;color:var(--ink-soft);font-weight:800}
+
+  /* toast */
+  #toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);
+    background:var(--pink);color:#fff;padding:11px 18px;border-radius:13px;font-weight:700;
+    font-size:14px;opacity:0;transition:.25s;z-index:80;pointer-events:none;max-width:90%}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #toast.bad{background:var(--red)}
+
+  .empty{text-align:center;color:var(--muted);padding:30px 10px;font-size:14px}
+  .config-warn{background:rgba(255,178,62,.12);color:var(--amber);border:1px solid rgba(255,178,62,.35);border-radius:14px;
+    padding:14px;font-size:13.5px;font-weight:600;margin:14px 18px}
+  .loader{min-height:100dvh;display:grid;place-items:center;color:var(--muted);font-weight:700;background:var(--bg)}
+  input[type=range]{accent-color:var(--pink);width:100%;height:28px}
+  .seg{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:4px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-card">
+    <div class="logo"><div class="dot">🐙</div><b>Octopus Énergie</b></div>
+    <div class="sub">Espace équipe — Bordeaux</div>
+    <label>Email</label>
+    <input class="field" id="loginEmail" type="email" autocomplete="username" placeholder="prenom@octopusenergie.fr">
+    <label>Mot de passe</label>
+    <input class="field" id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••">
+    <button class="btn" id="loginBtn">Se connecter</button>
+    <div class="err hidden" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <div class="topbar">
+    <div>
+      <div class="who" id="topWho"></div>
+      <h2 id="topTitle">Tableau de bord</h2>
+    </div>
+    <button class="logout" id="logoutBtn">Quitter</button>
+  </div>
+  <div id="content"></div>
+  <div class="nav" id="nav"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIG  —  ⚠️ À REMPLIR
+   1. Va sur jsonbin.io > API Keys, copie ta X-MASTER-KEY
+   2. Colle-la entre les guillemets ci-dessous
+   ============================================================ */
+const CONFIG = {
+  BIN_ID: "6a0e31c96877513b27a696d0",
+  MASTER_KEY: "COLLE_TA_CLE_X-MASTER-KEY_ICI",
+  ADMIN_EMAIL: "souleymane@octopusenergie.fr",
+  ADMIN_PASSWORD: "admin2026",
+  ADMIN_NOM: "Souleymane Ferreira"
+};
+
+const API = "https://api.jsonbin.io/v3/b/" + CONFIG.BIN_ID;
+let DATA = null;
+let USER = null;      // {role:'admin'|'commercial', ...}
+let TAB = "dash";
+let saving = false;
+
+/* ---------- API ---------- */
+async function loadData(){
+  const r = await fetch(API + "/latest", { headers:{ "X-Master-Key": CONFIG.MASTER_KEY }});
+  if(!r.ok) throw new Error("HTTP " + r.status);
+  const j = await r.json();
+  DATA = j.record;
+  // garde-fous structure
+  DATA.commerciaux   = DATA.commerciaux   || [];
+  DATA.contrats      = DATA.contrats      || [];
+  DATA.messages      = DATA.messages      || [];
+  DATA.locations     = DATA.locations     || [];
+  DATA.objectifsInd  = DATA.objectifsInd  || {};
+  DATA.prodAdmin     = DATA.prodAdmin     || {contrats:0,gaz:0,electricite:0,liste:[]};
+  DATA.prodAdmin.liste = DATA.prodAdmin.liste || [];
+  DATA.objectifEquipe = DATA.objectifEquipe || 0;
+  if(DATA.objectifHebdoConfirme==null) DATA.objectifHebdoConfirme = 8;
+  DATA.objectifsHebdo = DATA.objectifsHebdo || {};
+  if(DATA.objectifAdmin==null) DATA.objectifAdmin = 0;
+  if(DATA.objectifAdminHebdo==null) DATA.objectifAdminHebdo = 0;
+}
+async function save(){
+  saving = true;
+  try{
+    const r = await fetch(API, {
+      method:"PUT",
+      headers:{ "Content-Type":"application/json", "X-Master-Key": CONFIG.MASTER_KEY },
+      body: JSON.stringify(DATA)
+    });
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    toast("Enregistré ✓");
+  }catch(e){
+    toast("Échec de l'enregistrement", true);
+  }finally{ saving = false; }
+}
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const initials = n => (n||"?").trim().split(/\s+/).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+function toast(msg,bad){ const t=$("#toast"); t.textContent=msg; t.className="show"+(bad?" bad":""); setTimeout(()=>t.className="",2200); }
+function todayFr(){ const d=new Date(); return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear(); }
+function monthKey(){ const d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1); }
+function frMonth(){ return new Date().toLocaleDateString("fr-FR",{month:"long",year:"numeric"}); }
+function uid(){ return Date.now() + Math.floor(Math.random()*1000); }
+function parseFr(s){ if(!s) return null; const m=String(s).split(" ")[0].split("/"); if(m.length<3) return null; const d=new Date(+m[2],+m[1]-1,+m[0]); d.setHours(0,0,0,0); return isNaN(d)?null:d; }
+function weekRange(){ const d=new Date(); d.setHours(0,0,0,0); const day=(d.getDay()+6)%7; const s=new Date(d); s.setDate(d.getDate()-day); const e=new Date(s); e.setDate(s.getDate()+7); return [s,e]; }
+function inPeriod(dateStr,period){
+  const dt=parseFr(dateStr); if(!dt) return false; const now=new Date(); now.setHours(0,0,0,0);
+  if(period==="today") return dt.getTime()===now.getTime();
+  if(period==="week"){ const [s,e]=weekRange(); return dt>=s && dt<e; }
+  if(period==="month") return dt.getMonth()===now.getMonth() && dt.getFullYear()===now.getFullYear();
+  return true;
+}
+function niveauOf(c){ return c.niveau==="nouveau" ? "nouveau" : "confirme"; }
+function badge(c){ return niveauOf(c)==="nouveau"
+  ? '<span class="tag" style="background:#E6F6EF;color:#0F9D6B">🌱 Nouveau</span>'
+  : '<span class="tag" style="background:#E9F1FF;color:#2C6EE6">✓ Confirmé</span>'; }
+function dayNumber(dateDebut){ const s=parseFr(dateDebut); if(!s) return null; const now=new Date(); now.setHours(0,0,0,0); return Math.floor((now-s)/86400000)+1; }
+const PALIERS=[[5,2],[10,5],[15,8]];
+function frToIso(s){ const d=parseFr(s); return d? d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0") : ""; }
+function isoToFr(s){ if(!s) return ""; const m=s.split("-"); return m[2]+"/"+m[1]+"/"+m[0]; }
+function dateFromIso(s){ const m=s.split("-"); return new Date(+m[0],+m[1]-1,+m[2]); }
+function mondayOf(d){ const x=new Date(d); x.setHours(0,0,0,0); const day=(x.getDay()+6)%7; x.setDate(x.getDate()-day); return x; }
+function isoDate(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function weekKey(d){ return isoDate(mondayOf(d||new Date())); }
+function weekLabel(key){ const s=dateFromIso(key); const e=new Date(s); e.setDate(s.getDate()+6); const f=x=>String(x.getDate()).padStart(2,"0")+"/"+String(x.getMonth()+1).padStart(2,"0"); return f(s)+" – "+f(e); }
+function shiftWeek(key,delta){ const d=dateFromIso(key); d.setDate(d.getDate()+7*delta); return weekKey(d); }
+function weekContractsForKey(nom,key){ const s=dateFromIso(key); s.setHours(0,0,0,0); const e=new Date(s); e.setDate(s.getDate()+7); return DATA.contrats.filter(k=>{ if(k.archive||k.commercial!==nom) return false; const dt=parseFr(k.date); return dt&&dt>=s&&dt<e; }).length; }
+function objHebdoOf(id,key){ return (DATA.objectifsHebdo[id]&&+DATA.objectifsHebdo[id][key])||0; }
+let reglagesWeek = weekKey();
+
+/* ---------- AUTH ---------- */
+$("#loginBtn").onclick = doLogin;
+$("#loginPass").addEventListener("keydown",e=>{ if(e.key==="Enter") doLogin(); });
+
+async function doLogin(){
+  const email = $("#loginEmail").value.trim().toLowerCase();
+  const pass  = $("#loginPass").value;
+  const errEl = $("#loginErr");
+  errEl.classList.add("hidden");
+
+  if(CONFIG.MASTER_KEY.startsWith("COLLE_")){
+    errEl.textContent = "Configuration manquante : ajoute ta clé JSONBin dans le code (CONFIG.MASTER_KEY).";
+    errEl.classList.remove("hidden"); return;
+  }
+  $("#loginBtn").textContent = "Connexion…";
+  try{
+    if(!DATA) await loadData();
+  }catch(e){
+    errEl.textContent = "Connexion à la base impossible. Vérifie la clé et l'ID du bin.";
+    errEl.classList.remove("hidden"); $("#loginBtn").textContent="Se connecter"; return;
+  }
+  $("#loginBtn").textContent = "Se connecter";
+
+  if(email===CONFIG.ADMIN_EMAIL.toLowerCase() && pass===CONFIG.ADMIN_PASSWORD){
+    USER = { role:"admin", nom:CONFIG.ADMIN_NOM };
+  } else {
+    const c = DATA.commerciaux.find(c => (c.email||"").toLowerCase()===email && c.password===pass);
+    if(c) USER = { role:"commercial", ...c };
+  }
+  if(!USER){
+    errEl.textContent = "Email ou mot de passe incorrect.";
+    errEl.classList.remove("hidden"); return;
+  }
+  $("#login").classList.add("hidden");
+  $("#app").classList.remove("hidden");
+  $("#topWho").textContent = USER.nom + (USER.role==="admin"?" · Manager":" · Commercial");
+  TAB = "dash";
+  renderNav(); render();
+}
+$("#logoutBtn").onclick = ()=>{ USER=null; location.reload(); };
+
+/* ---------- NAV ---------- */
+const ICONS = {
+  dash:'<path d="M3 13h8V3H3zM13 21h8V3h-8zM3 21h8v-6H3z" fill="currentColor"/>',
+  team:'<path d="M16 11a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm-8 1a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm0 2c-2.7 0-6 1.3-6 4v2h8v-2c0-1 .4-1.9 1-2.6A9 9 0 0 0 8 14Zm8 0c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4Z" fill="currentColor"/>',
+  contrats:'<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm8 1.5V8h4.5M8 13h8M8 17h8M8 9h3" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+  planning:'<path d="M7 2v3M17 2v3M3 8h18M5 5h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+  messages:'<path d="M21 12a8 8 0 0 1-8 8H4l-2 2V12a8 8 0 0 1 8-8h3a8 8 0 0 1 8 8Z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>',
+  reglages:'<path d="M12 9a3 3 0 1 0 3 3 3 3 0 0 0-3-3Zm8 3a8 8 0 0 0-.2-1.7l2-1.5-2-3.5-2.3 1a8 8 0 0 0-2.9-1.7L14 1h-4l-.6 2.6A8 8 0 0 0 6.5 5.3l-2.3-1-2 3.5 2 1.5A8 8 0 0 0 4 12a8 8 0 0 0 .2 1.7l-2 1.5 2 3.5 2.3-1a8 8 0 0 0 2.9 1.7L10 23h4l.6-2.6a8 8 0 0 0 2.9-1.7l2.3 1 2-3.5-2-1.5A8 8 0 0 0 20 12Z" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/>',
+  stats:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+};
+function renderNav(){
+  const tabs = USER.role==="admin"
+    ? [["dash","Équipe"],["stats","Stats"],["team","Équipiers"],["contrats","Contrats"],["planning","Planning"],["reglages","Réglages"]]
+    : [["dash","Accueil"],["contrats","Mes ventes"],["planning","Planning"],["messages","Messages"]];
+  $("#nav").innerHTML = tabs.map(([id,label])=>
+    `<button data-tab="${id}" class="${TAB===id?'on':''}">
+       <svg viewBox="0 0 24 24">${ICONS[id]||ICONS.dash}</svg>${label}</button>`).join("");
+  document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{ TAB=b.dataset.tab; renderNav(); render(); });
+}
+
+/* ---------- RENDER ROUTER ---------- */
+const TITLES = {dash:"Tableau de bord",stats:"Statistiques",team:"Commerciaux",contrats:USER?(USER.role==="admin"?"Contrats":"Mes ventes"):"",planning:"Planning",messages:"Messages",reglages:"Réglages"};
+function render(){
+  $("#topTitle").textContent = TITLES[TAB] || "";
+  const c = $("#content");
+  if(TAB==="dash")      c.innerHTML = USER.role==="admin" ? viewDashAdmin() : viewDashCommercial();
+  else if(TAB==="stats") c.innerHTML = viewStats();
+  else if(TAB==="team") c.innerHTML = viewTeam();
+  else if(TAB==="contrats") c.innerHTML = viewContrats();
+  else if(TAB==="planning") c.innerHTML = viewPlanning();
+  else if(TAB==="messages") c.innerHTML = viewMessages();
+  else if(TAB==="reglages") c.innerHTML = viewReglages();
+  bindView();
+}
+
+/* ---------- totals ---------- */
+function teamTotals(){
+  let contrats=0,gaz=0,elec=0;
+  DATA.commerciaux.forEach(c=>{ contrats+=(+c.contrats||0); gaz+=(+c.gaz||0); elec+=(+c.electricite||0); });
+  const pa = DATA.prodAdmin||{};
+  contrats+=(+pa.contrats||0); gaz+=(+pa.gaz||0); elec+=(+pa.electricite||0);
+  return {contrats,gaz,elec};
+}
+function ring(pct){
+  const r=42,c=2*Math.PI*r,off=c*(1-Math.min(pct,100)/100);
+  return `<div class="ring"><svg width="96" height="96">
+    <circle cx="48" cy="48" r="${r}" stroke="#ECE7F0" stroke-width="9" fill="none"/>
+    <circle cx="48" cy="48" r="${r}" stroke="#ED0080" stroke-width="9" fill="none"
+      stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}"/>
+    </svg><div class="val">${Math.round(pct)}%</div></div>`;
+}
+
+/* ---------- compteurs commerciaux (mis à jour à chaque vente) ---------- */
+function bumpComm(nom, type, delta){
+  const cc = DATA.commerciaux.find(x=>x.nom===nom);
+  if(!cc) return;
+  cc.contrats = Math.max(0,(+cc.contrats||0)+delta);
+  if(type==="Gaz") cc.gaz = Math.max(0,(+cc.gaz||0)+delta);
+  else cc.electricite = Math.max(0,(+cc.electricite||0)+delta);
+}
+function weekCountAdmin(){
+  return (DATA.prodAdmin.liste||[]).filter(k=>!k.archive && inPeriod(k.date,"week")).length;
+}
+
+/* ---------- classement / podium (partagé admin + commerciaux) ---------- */
+function rankingData(){
+  return [...DATA.commerciaux].sort((a,b)=>(+b.contrats||0)-(+a.contrats||0));
+}
+function podiumHtml(ranking){
+  const top3 = ranking.slice(0,3);
+  const podOrder = [top3[1],top3[0],top3[2]]; // argent, or, bronze
+  const podClass = ["s","g","b"], medal=["🥈","🥇","🥉"];
+  return top3.length ? `
+    <div class="card">
+      <h3>🏆 Podium du mois</h3>
+      <div class="podium">
+        ${podOrder.map((c,i)=> c ? `<div class="pod ${podClass[i]}">
+          <div class="av">${initials(c.nom)}</div>
+          <div class="nm">${esc(c.nom)}</div>
+          <div class="sc">${c.contrats||0} contrats</div>
+          <div class="stand">${medal[i]}</div>
+        </div>` : `<div class="pod ${podClass[i]}" style="visibility:hidden"></div>`).join("")}
+      </div>
+    </div>` : "";
+}
+function classementHtml(ranking, includeManager){
+  return `<div class="card">
+      <h3>Classement</h3>
+      ${ranking.map((c,i)=>{
+        const o = +DATA.objectifsInd[c.id]||0;
+        const p = o? Math.min((+c.contrats||0)/o*100,100):0;
+        return `<div class="person">
+          <div class="avatar">${initials(c.nom)}</div>
+          <div class="info"><b>${i===0?"🥇 ":i===1?"🥈 ":i===2?"🥉 ":""}${esc(c.nom)}</b>
+            <small>${badge(c)} ${o?(" Objectif "+o):""}</small>
+            ${o?`<div class="bar"><i style="width:${p}%"></i></div>`:""}
+          </div>
+          <div class="score">${c.contrats||0}<small>contrats</small></div>
+        </div>`;
+      }).join("")}
+      ${includeManager?`<div class="person">
+        <div class="avatar" style="background:#ffe9d6;color:#b85c00">${initials(CONFIG.ADMIN_NOM)}</div>
+        <div class="info"><b>${esc(CONFIG.ADMIN_NOM)}</b>
+          <small>Manager${DATA.objectifAdmin?(" · Objectif "+DATA.objectifAdmin):""}</small>
+          ${DATA.objectifAdmin?`<div class="bar"><i style="width:${Math.min((DATA.prodAdmin.contrats||0)/DATA.objectifAdmin*100,100)}%;background:#E0A400"></i></div>`:""}
+        </div>
+        <div class="score">${DATA.prodAdmin.contrats||0}<small>contrats</small></div>
+      </div>`:""}
+    </div>`;
+}
+
+/* ---------- DASHBOARD ADMIN ---------- */
+function viewDashAdmin(){
+  const t = teamTotals();
+  const obj = DATA.objectifEquipe||0;
+  const pct = obj? (t.contrats/obj*100):0;
+  const ranking = rankingData();
+  return `
+  <div class="view">
+    <div class="card">
+      <h3>Objectif équipe · ${esc(frMonth())}</h3>
+      <div class="obj-wrap">
+        ${ring(pct)}
+        <div class="obj-meta">
+          <div class="num">${t.contrats}<span> / ${obj}</span></div>
+          <div class="big">${obj-t.contrats>0? (obj-t.contrats)+" contrats restants" : "Objectif atteint 🎉"}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🗓️ Ma semaine</h3>
+      <div class="seg">Semaine du ${weekLabel(weekKey())}</div>
+      <div class="obj-wrap">
+        ${ring(DATA.objectifAdminHebdo? Math.min(weekCountAdmin()/DATA.objectifAdminHebdo*100,100) : 0)}
+        <div class="obj-meta">
+          <div class="num">${weekCountAdmin()}<span> / ${DATA.objectifAdminHebdo||"—"}</span></div>
+          <div class="big">${DATA.objectifAdminHebdo? (weekCountAdmin()>=DATA.objectifAdminHebdo?"Objectif semaine atteint 🎉":(DATA.objectifAdminHebdo-weekCountAdmin())+" pour l'objectif") : "Définis ton objectif dans Réglages"}</div>
+        </div>
+      </div>
+    </div>
+    ${podiumHtml(ranking)}
+    <div class="card">
+      <h3>Production du mois</h3>
+      <div class="stats">
+        <div class="stat"><div class="n">${t.contrats}</div><div class="l">Contrats</div></div>
+        <div class="stat"><div class="n">${t.elec}</div><div class="l">Élec</div></div>
+        <div class="stat"><div class="n">${t.gaz}</div><div class="l">Gaz</div></div>
+      </div>
+    </div>
+    ${classementHtml(ranking, true)}
+  </div>`;
+}
+
+/* ---------- DASHBOARD COMMERCIAL ---------- */
+function viewDashCommercial(){
+  const c = DATA.commerciaux.find(x=>x.id===USER.id) || USER;
+  const o = +DATA.objectifsInd[c.id]||0;
+  const pct = o? (+c.contrats||0)/o*100 : 0;
+  const mine = DATA.contrats.filter(k=>k.commercial===c.nom && !k.archive);
+  const recents = mine.slice(0,4);
+  const oh = objHebdoOf(c.id,weekKey()); const wh = weekContractsForKey(c.nom,weekKey());
+  const ph = oh?Math.min(wh/oh*100,100):0; const okh = oh&&wh>=oh;
+  return `
+  <div class="view">
+    <div class="card">
+      <h3>🗓️ Mon objectif de la semaine</h3>
+      <div class="seg">Semaine du ${weekLabel(weekKey())}</div>
+      <div class="obj-wrap">
+        ${ring(oh?ph:0)}
+        <div class="obj-meta">
+          <div class="num">${wh}<span> / ${oh||"—"}</span></div>
+          <div class="big">${oh? (okh?"Objectif semaine atteint 🎉":(oh-wh)+" cette semaine") : "Aucun objectif fixé"}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Mon objectif du mois · ${esc(frMonth())}</h3>
+      <div class="obj-wrap">
+        ${ring(o?pct:0)}
+        <div class="obj-meta">
+          <div class="num">${c.contrats||0}<span> / ${o||"—"}</span></div>
+          <div class="big">${o? (o-(+c.contrats||0)>0? (o-(+c.contrats||0))+" pour l'objectif" : "Objectif atteint 🎉") : "Objectif non défini"}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="stats">
+        <div class="stat"><div class="n">${c.contrats||0}</div><div class="l">Contrats</div></div>
+        <div class="stat"><div class="n">${c.electricite||0}</div><div class="l">Élec</div></div>
+        <div class="stat"><div class="n">${c.gaz||0}</div><div class="l">Gaz</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Mes dernières ventes</h3>
+      ${recents.length? recents.map(contractRow).join("") : '<div class="empty">Aucune vente enregistrée.</div>'}
+      <button class="add-link" data-act="add-contract-self">+ Ajouter une vente</button>
+    </div>
+    ${podiumHtml(rankingData())}
+    ${classementHtml(rankingData(), true)}
+  </div>`;
+}
+
+/* ---------- STATS (admin) ---------- */
+let statsPeriod = "today";
+function periodContracts(period){
+  const arr = DATA.contrats.filter(k=>!k.archive && inPeriod(k.date,period)).map(k=>({...k}));
+  (DATA.prodAdmin.liste||[]).forEach(k=>{ if(!k.archive && inPeriod(k.date,period)) arr.push({...k,commercial:CONFIG.ADMIN_NOM}); });
+  return arr;
+}
+function weekCountFor(nom){ return DATA.contrats.filter(k=>!k.archive && k.commercial===nom && inPeriod(k.date,"week")).length; }
+function viewStats(){
+  const labels = {today:"Aujourd'hui",week:"Cette semaine",month:"Ce mois"};
+  const list = periodContracts(statsPeriod);
+  const elec = list.filter(k=>k.type!=="Gaz").length;
+  const gaz  = list.filter(k=>k.type==="Gaz").length;
+  // breakdown par commercial
+  const byComm = {};
+  list.forEach(k=>{ const n=k.commercial||"—"; byComm[n]=(byComm[n]||0)+1; });
+  const rows = Object.entries(byComm).sort((a,b)=>b[1]-a[1]);
+
+  // objectif hebdo confirmés
+  const target = DATA.objectifHebdoConfirme||0;
+  const confirmes = DATA.commerciaux.filter(c=>niveauOf(c)==="confirme");
+
+  return `<div class="view">
+    <div class="filters">
+      ${["today","week","month"].map(p=>`<button class="chip ${statsPeriod===p?'on':''}" data-stats="${p}">${labels[p]}</button>`).join("")}
+    </div>
+    <div class="card">
+      <h3>${labels[statsPeriod]} · ${list.length} contrat${list.length>1?"s":""}</h3>
+      <div class="stats">
+        <div class="stat"><div class="n">${list.length}</div><div class="l">Total</div></div>
+        <div class="stat"><div class="n">${elec}</div><div class="l">Élec</div></div>
+        <div class="stat"><div class="n">${gaz}</div><div class="l">Gaz</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Par commercial · ${labels[statsPeriod]}</h3>
+      ${rows.length? rows.map(([n,v])=>`<div class="person">
+        <div class="avatar">${initials(n)}</div>
+        <div class="info"><b>${esc(n)}</b></div>
+        <div class="score">${v}<small>vente${v>1?'s':''}</small></div>
+      </div>`).join("") : '<div class="empty">Aucune vente sur cette période.</div>'}
+    </div>
+    <div class="card">
+      <h3>🗓️ Objectif hebdo individuel · semaine en cours</h3>
+      <div class="seg">Semaine du ${weekLabel(weekKey())}</div>
+      ${DATA.commerciaux.length? DATA.commerciaux.map(c=>{
+        const o=objHebdoOf(c.id,weekKey()); const w=weekContractsForKey(c.nom,weekKey());
+        const p=o?Math.min(w/o*100,100):0; const ok=o&&w>=o;
+        return `<div class="person">
+          <div class="avatar">${initials(c.nom)}</div>
+          <div class="info"><b>${esc(c.nom)} ${ok?'✅':''}</b>
+            <small>${w} / ${o||"—"} cette semaine</small>
+            ${o?`<div class="bar"><i style="width:${p}%;background:${ok?'#0F9D6B':'#ED0080'}"></i></div>`:'<small style="color:var(--muted)">pas d’objectif défini — à régler dans Réglages</small>'}
+          </div>
+        </div>`;
+      }).join("") : '<div class="empty">Aucun commercial.</div>'}
+    </div>
+  </div>`;
+}
+
+/* ---------- TEAM (admin) ---------- */
+function viewTeam(){
+  return `<div class="view">
+    <div class="card">
+      <div class="sheet-head"><h3>Commerciaux (${DATA.commerciaux.length})</h3>
+        <button class="small-btn" data-act="add-comm">+ Ajouter</button></div>
+      ${DATA.commerciaux.map(c=>{
+        const nv = niveauOf(c);
+        let paliers = "";
+        if(nv==="nouveau"){
+          const jn = dayNumber(c.dateDebut);
+          const ct = +c.contrats||0;
+          if(jn==null){
+            paliers = `<div style="margin:8px 0 4px;font-size:12.5px;color:var(--muted)">🎯 Définis la date d'arrivée pour activer les paliers (bouton Gérer).</div>`;
+          } else {
+            paliers = `<div style="margin:10px 0 2px;display:flex;gap:8px;flex-wrap:wrap">
+              ${PALIERS.map(([j,target])=>{
+                const due = jn>=j;
+                const ok = ct>=target;
+                const bg = ok?'#E6F6EF':due?'#FBE9EB':'#F1EDF5';
+                const col= ok?'#0F9D6B':due?'#D63A4A':'#8C879E';
+                return `<span class="tag" style="background:${bg};color:${col}">J${j} · ${target} ${ok?'✓':''}</span>`;
+              }).join("")}
+              <span style="font-size:12px;color:var(--muted);font-weight:700;align-self:center">Jour ${jn} · ${ct} contrat${ct>1?'s':''}</span>
+            </div>`;
+          }
+        }
+        return `<div style="padding:6px 0;border-bottom:1px solid var(--line)">
+          <div class="person" style="border:none;padding:8px 0">
+            <div class="avatar">${initials(c.nom)}</div>
+            <div class="info"><b>${esc(c.nom)}</b><small>${badge(c)} ${esc(c.email||"")}</small></div>
+            <button class="small-btn" data-act="edit-comm" data-id="${c.id}">Gérer</button>
+          </div>
+          ${paliers}
+        </div>`;
+      }).join("")}
+    </div>
+  </div>`;
+}
+
+/* ---------- CONTRATS ---------- */
+let contractFilter = "tous";
+function statutTag(s){
+  if(s==="Validé") return '<span class="tag t-val">Validé</span>';
+  if(s==="Refusé") return '<span class="tag t-ref">Refusé</span>';
+  return '<span class="tag t-att">En attente</span>';
+}
+function contractRow(k){
+  const t = k.type==="Gaz"?'<span class="tag t-gaz">Gaz</span>':'<span class="tag t-elec">Élec</span>';
+  return `<div class="contract" data-cid="${k.id}">
+    <div class="top"><b>${esc(k.prenom||"")} ${esc(k.client||"")}</b>${statutTag(k.statut)}</div>
+    <div class="meta">${t}<span>Réf ${esc(k.ref||"—")}</span><span>${esc(k.date||"")}</span>${USER.role==="admin"?`<span>· ${esc(k.commercial||"")}</span>`:""}</div>
+  </div>`;
+}
+function viewContrats(){
+  let list;
+  if(USER.role==="admin"){
+    list = DATA.contrats.filter(k=>!k.archive);
+  } else {
+    const c = DATA.commerciaux.find(x=>x.id===USER.id)||USER;
+    list = DATA.contrats.filter(k=>k.commercial===c.nom && !k.archive);
+  }
+  if(contractFilter!=="tous") list = list.filter(k=>k.statut===contractFilter);
+  list = [...list].sort((a,b)=>b.id-a.id);
+
+  const filters = ["tous","En attente","Validé","Refusé"];
+  return `<div class="view">
+    <div class="filters">
+      ${filters.map(f=>`<button class="chip ${contractFilter===f?'on':''}" data-filter="${f}">${f==="tous"?"Tous":f}</button>`).join("")}
+    </div>
+    <div class="card">
+      <div class="sheet-head"><h3>${list.length} contrat${list.length>1?"s":""}</h3>
+        <button class="small-btn" data-act="${USER.role==='admin'?'add-contract-admin':'add-contract-self'}">+ Ajouter</button></div>
+      ${list.length? list.map(contractRow).join("") : '<div class="empty">Aucun contrat dans cette catégorie.</div>'}
+    </div>
+  </div>`;
+}
+
+/* ---------- PLANNING ---------- */
+let planningTarget = null; // commercial id (admin) ou self
+let planMultiMode = false;
+let planSelectedDays = new Set();
+function daysInMonth(){ return new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate(); }
+function selectWeekdays(weekdays){
+  const dim = daysInMonth(); const y=new Date().getFullYear(), m=new Date().getMonth();
+  planSelectedDays = new Set();
+  for(let d=1; d<=dim; d++){ if(weekdays.includes(new Date(y,m,d).getDay())) planSelectedDays.add(d); }
+}
+function viewPlanning(){
+  let comm;
+  if(USER.role==="admin"){
+    if(planningTarget==null && DATA.commerciaux[0]) planningTarget = DATA.commerciaux[0].id;
+    comm = DATA.commerciaux.find(c=>c.id===planningTarget);
+  } else {
+    comm = DATA.commerciaux.find(c=>c.id===USER.id)||USER;
+  }
+  const mk = monthKey();
+  const pm = (comm && comm.planningMensuel && comm.planningMensuel[mk]) || {};
+  const days = daysInMonth();
+
+  let head = "";
+  if(USER.role==="admin"){
+    head = `<select class="field" id="planSel" style="margin-bottom:12px">
+      ${DATA.commerciaux.map(c=>`<option value="${c.id}" ${c.id===planningTarget?"selected":""}>${esc(c.nom)}</option>`).join("")}
+    </select>`;
+  }
+  let rows="";
+  for(let d=1; d<=days; d++){
+    const v = pm[d] || "";
+    const repos = !v || /repos/i.test(v);
+    const sel = planMultiMode && planSelectedDays.has(d);
+    rows += `<div class="day ${repos?'repos':''}" ${planMultiMode?`data-day="${d}" style="cursor:pointer;${sel?'background:#ffe1f0;border-radius:10px;margin:0 -6px;padding-left:6px;padding-right:6px':''}"`:""}>
+      ${planMultiMode?`<span style="width:20px;height:20px;border-radius:6px;border:2px solid ${sel?'#ED0080':'#ECE7F0'};background:${sel?'#ED0080':'transparent'};display:grid;place-items:center;flex:none;color:#fff;font-size:13px;font-weight:800">${sel?'✓':''}</span>`:""}
+      <div class="d">${d}</div>
+      <div class="v">${esc(v||"—")}</div>
+      ${USER.role==="admin"&&!planMultiMode?`<button class="small-btn" data-act="edit-day" data-day="${d}">✎</button>`:""}
+    </div>`;
+  }
+  const multiTools = USER.role==="admin" ? (planMultiMode ? `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 12px">
+      <button class="chip" data-act="plan-sel-week">Lun → Ven</button>
+      <button class="chip" data-act="plan-sel-weekend">Week-ends</button>
+      <button class="chip" data-act="plan-sel-all">Tout le mois</button>
+      <button class="chip" data-act="plan-sel-none">Aucun</button>
+    </div>
+    <button class="btn" data-act="plan-fill-selection" ${planSelectedDays.size?"":'disabled style="opacity:.45"'}>Remplir ${planSelectedDays.size||""} jour${planSelectedDays.size>1?"s":""} sélectionné${planSelectedDays.size>1?"s":""}</button>
+    <button class="btn secondary" data-act="plan-toggle-multi" style="margin-top:10px">Terminer la sélection</button>
+  ` : `<button class="small-btn" data-act="plan-toggle-multi" style="margin-bottom:12px">📋 Remplir plusieurs jours d'un coup</button>`) : "";
+  return `<div class="view">
+    ${head}
+    <div class="card">
+      <h3>${esc(comm?comm.nom:"")} · ${esc(frMonth())}</h3>
+      ${multiTools}
+      ${rows}
+    </div>
+  </div>`;
+}
+
+/* ---------- MESSAGES ---------- */
+function viewMessages(){
+  const msgs = [...(DATA.messages||[])].sort((a,b)=>b.id-a.id);
+  return `<div class="view">
+    <div class="card">
+      <h3>Annonce à l'équipe</h3>
+      <textarea class="field" id="msgInput" rows="2" placeholder="Écris un message…"></textarea>
+      <button class="btn" data-act="send-msg" style="margin-top:12px">Publier</button>
+    </div>
+    <div class="card">
+      <h3>Fil d'actualité</h3>
+      ${msgs.length? msgs.map(m=>`<div class="msg">
+        <div class="h"><b>${esc(m.nom)} ${m.role==="admin"?'<span class="pill">Manager</span>':""}</b><small>${esc(m.date||"")}</small></div>
+        <p>${esc(m.texte)}</p>
+      </div>`).join("") : '<div class="empty">Aucun message.</div>'}
+    </div>
+  </div>`;
+}
+
+/* ---------- REGLAGES (admin) ---------- */
+function viewReglages(){
+  return `<div class="view">
+    <div class="card">
+      <h3>Objectif équipe (mois)</h3>
+      <div class="row">
+        <input class="field" id="objEquipe" type="number" value="${DATA.objectifEquipe||0}">
+        <button class="btn" data-act="save-obj" style="margin-top:0">Enregistrer</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Objectifs individuels</h3>
+      <div class="seg">L'objectif est enregistré automatiquement quand tu changes le chiffre.</div>
+      ${DATA.commerciaux.map(c=>`<div class="person">
+        <div class="avatar">${initials(c.nom)}</div>
+        <div class="info"><b>${esc(c.nom)}</b><small>${badge(c)}</small></div>
+        <input class="field" style="max-width:90px" type="number" inputmode="numeric" data-objind="${c.id}" value="${+DATA.objectifsInd[c.id]||0}">
+      </div>`).join("")}
+    </div>
+    <div class="card">
+      <h3>🗓️ Objectifs de la semaine</h3>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 12px">
+        <button class="small-btn" data-act="week-prev">◀</button>
+        <div style="text-align:center;font-weight:800;font-size:14px">
+          Semaine du ${weekLabel(reglagesWeek)}
+          ${reglagesWeek===weekKey()?'<div class="seg" style="margin:0;color:var(--pink)">semaine en cours</div>':'<div class="seg" style="margin:0">— <span style="text-decoration:underline" data-act="week-now">revenir à cette semaine</span></div>'}
+        </div>
+        <button class="small-btn" data-act="week-next">▶</button>
+      </div>
+      ${DATA.commerciaux.map(c=>`<div class="person">
+        <div class="avatar">${initials(c.nom)}</div>
+        <div class="info"><b>${esc(c.nom)}</b><small>${weekContractsForKey(c.nom,reglagesWeek)} vendus cette semaine</small></div>
+        <input class="field" style="max-width:90px" type="number" inputmode="numeric" data-objhebdo="${c.id}" value="${objHebdoOf(c.id,reglagesWeek)}">
+      </div>`).join("")}
+    </div>
+    <div class="card">
+      <h3>Lieux de stand</h3>
+      ${(DATA.locations||[]).map((l,i)=>`<div class="person">
+        <div class="info"><b>${esc(l)}</b></div>
+        <button class="small-btn danger" data-act="del-loc" data-i="${i}">Supprimer</button>
+      </div>`).join("")}
+      <div class="row" style="margin-top:10px">
+        <input class="field" id="newLoc" placeholder="Nouveau lieu (ex: Carrefour Lormont)">
+        <button class="btn" data-act="add-loc" style="margin-top:0">Ajouter</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sheet-head"><h3>Ma production</h3>
+        <button class="small-btn" data-act="add-prod-admin">+ Ajouter une vente</button></div>
+      <div class="person" style="border-bottom:1px solid var(--line)">
+        <div class="info"><b>Mon objectif du mois</b><small>${DATA.prodAdmin.contrats||0} / ${DATA.objectifAdmin||"—"} ce mois</small></div>
+        <input class="field" style="max-width:90px" type="number" inputmode="numeric" data-objadmin value="${DATA.objectifAdmin||0}">
+      </div>
+      <div class="person" style="border-bottom:1px solid var(--line)">
+        <div class="info"><b>Mon objectif de la semaine</b><small>${weekCountAdmin()} / ${DATA.objectifAdminHebdo||"—"} cette semaine</small></div>
+        <input class="field" style="max-width:90px" type="number" inputmode="numeric" data-objadminhebdo value="${DATA.objectifAdminHebdo||0}">
+      </div>
+      <div class="stats" style="margin-top:12px">
+        <div class="stat"><div class="n">${DATA.prodAdmin.contrats||0}</div><div class="l">Contrats</div></div>
+        <div class="stat"><div class="n">${DATA.prodAdmin.electricite||0}</div><div class="l">Élec</div></div>
+        <div class="stat"><div class="n">${DATA.prodAdmin.gaz||0}</div><div class="l">Gaz</div></div>
+      </div>
+      <div style="margin-top:6px">
+        ${(()=>{ const live=(DATA.prodAdmin.liste||[]).filter(k=>!k.archive).sort((a,b)=>b.id-a.id);
+          return live.length? live.map(k=>{
+            const t=k.type==="Gaz"?'<span class="tag t-gaz">Gaz</span>':'<span class="tag t-elec">Élec</span>';
+            return `<div class="contract acontract" data-aid="${k.id}">
+              <div class="top"><b>${esc(k.prenom||"")} ${esc(k.client||"")}</b>${statutTag(k.statut)}</div>
+              <div class="meta">${t}<span>Réf ${esc(k.ref||"—")}</span><span>${esc(k.date||"")}</span></div>
+            </div>`;
+          }).join("") : '<div class="empty">Aucune vente. Ajoute la première avec le bouton ci-dessus.</div>';
+        })()}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   BIND — interactions
+   ============================================================ */
+function bindView(){
+  // filters
+  document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{ contractFilter=b.dataset.filter; render(); });
+  // stats period
+  document.querySelectorAll("[data-stats]").forEach(b=>b.onclick=()=>{ statsPeriod=b.dataset.stats; render(); });
+  // weekly confirmed slider
+  const hr=$("#hebdoRange");
+  if(hr){
+    hr.oninput=()=>{ $("#hebdoVal").textContent=hr.value; };
+    hr.onchange=async()=>{ DATA.objectifHebdoConfirme=+hr.value; await save(); render(); };
+  }
+  // planning select
+  const ps = $("#planSel"); if(ps) ps.onchange=()=>{ planningTarget=isNaN(+ps.value)?ps.value:+ps.value; planMultiMode=false; planSelectedDays=new Set(); render(); };
+  // jours du planning en mode sélection multiple
+  if(planMultiMode){
+    document.querySelectorAll(".day[data-day]").forEach(el=>el.onclick=()=>{
+      const d=+el.dataset.day;
+      if(planSelectedDays.has(d)) planSelectedDays.delete(d); else planSelectedDays.add(d);
+      render();
+    });
+  }
+  // contract tap -> manage (admin)
+  if(USER.role==="admin"){
+    document.querySelectorAll(".contract:not(.acontract)").forEach(el=>el.onclick=()=>openContract(+el.dataset.cid));
+    document.querySelectorAll(".acontract").forEach(el=>el.onclick=()=>openAdminContract(+el.dataset.aid));
+  }
+  // objectifs individuels — enregistrement auto par commercial
+  document.querySelectorAll("[data-objind]").forEach(inp=>inp.onchange=async()=>{
+    DATA.objectifsInd[inp.dataset.objind]=+inp.value||0;
+    await save();
+  });
+  // objectif mensuel du manager
+  const objAdmin=document.querySelector("[data-objadmin]");
+  if(objAdmin) objAdmin.onchange=async()=>{ DATA.objectifAdmin=+objAdmin.value||0; await save(); render(); };
+  const objAdminHebdo=document.querySelector("[data-objadminhebdo]");
+  if(objAdminHebdo) objAdminHebdo.onchange=async()=>{ DATA.objectifAdminHebdo=+objAdminHebdo.value||0; await save(); render(); };
+  // objectifs hebdo individuels — enregistrement auto (semaine s\u00e9lectionn\u00e9e)
+  document.querySelectorAll("[data-objhebdo]").forEach(inp=>inp.onchange=async()=>{
+    const id=inp.dataset.objhebdo;
+    DATA.objectifsHebdo[id]=DATA.objectifsHebdo[id]||{};
+    DATA.objectifsHebdo[id][reglagesWeek]=+inp.value||0;
+    await save();
+  });
+  // generic actions
+  document.querySelectorAll("[data-act]").forEach(el=>el.onclick=(e)=>{
+    e.stopPropagation();
+    handleAct(el.dataset.act, el.dataset);
+  });
+}
+
+function handleAct(act,ds){
+  switch(act){
+    case "add-comm": editCommSheet(null); break;
+    case "edit-comm": editCommSheet(DATA.commerciaux.find(c=>String(c.id)===ds.id)); break;
+    case "add-contract-self": contractSheet(USER.nom); break;
+    case "add-contract-admin": contractSheet(null); break;
+    case "add-prod-admin": contractSheet(null,"admin"); break;
+    case "send-msg": sendMsg(); break;
+    case "edit-day": editDay(+ds.day); break;
+    case "save-obj": DATA.objectifEquipe=+$("#objEquipe").value||0; save().then(render); break;
+    case "add-loc": addLoc(); break;
+    case "week-prev": reglagesWeek = shiftWeek(reglagesWeek,-1); render(); break;
+    case "week-next": reglagesWeek = shiftWeek(reglagesWeek,1); render(); break;
+    case "week-now": reglagesWeek = weekKey(); render(); break;
+    case "del-loc": DATA.locations.splice(+ds.i,1); save().then(render); break;
+    case "plan-toggle-multi": planMultiMode=!planMultiMode; planSelectedDays=new Set(); render(); break;
+    case "plan-sel-week": selectWeekdays([1,2,3,4,5]); render(); break;
+    case "plan-sel-weekend": selectWeekdays([0,6]); render(); break;
+    case "plan-sel-all": { const dim=daysInMonth(); planSelectedDays=new Set(); for(let d=1; d<=dim; d++) planSelectedDays.add(d); render(); break; }
+    case "plan-sel-none": planSelectedDays=new Set(); render(); break;
+    case "plan-fill-selection": fillSelectionSheet(); break;
+  }
+}
+
+/* ---------- modal helper ---------- */
+function sheet(title, inner){
+  const o=document.createElement("div"); o.className="overlay";
+  o.innerHTML=`<div class="sheet"><div class="sheet-head"><h3>${title}</h3><button class="x">×</button></div>${inner}</div>`;
+  o.onclick=e=>{ if(e.target===o) o.remove(); };
+  o.querySelector(".x").onclick=()=>o.remove();
+  document.body.appendChild(o);
+  return o;
+}
+
+/* ---------- commercial add/edit ---------- */
+function editCommSheet(c){
+  const isNew=!c; c=c||{};
+  const o=sheet(isNew?"Nouveau commercial":"Gérer le commercial",`
+    <label>Nom complet</label><input class="field" id="f_nom" value="${esc(c.nom||"")}">
+    <label>Email</label><input class="field" id="f_email" value="${esc(c.email||"")}">
+    <label>Mot de passe</label><input class="field" id="f_pass" value="${esc(c.password||"")}">
+    <div class="row">
+      <div><label>Contrats</label><input class="field" id="f_ct" type="number" value="${c.contrats||0}"></div>
+      <div><label>Élec</label><input class="field" id="f_el" type="number" value="${c.electricite||0}"></div>
+      <div><label>Gaz</label><input class="field" id="f_gz" type="number" value="${c.gaz||0}"></div>
+    </div>
+    <label>Objectif individuel</label><input class="field" id="f_obj" type="number" value="${isNew?0:(+DATA.objectifsInd[c.id]||0)}">
+    <label>Niveau</label>
+    <select class="field" id="f_niv">
+      <option value="confirme" ${niveauOf(c)==="confirme"?"selected":""}>✓ Confirmé</option>
+      <option value="nouveau" ${niveauOf(c)==="nouveau"?"selected":""}>🌱 Nouveau (paliers J5/J10/J15)</option>
+    </select>
+    <div id="f_datewrap" style="${niveauOf(c)==="nouveau"?"":"display:none"}">
+      <label>Date d'arrivée</label>
+      <input class="field" id="f_date" type="date" value="${isNew?"":frToIso(c.dateDebut)}">
+    </div>
+    <button class="btn" id="f_save">${isNew?"Créer":"Enregistrer"}</button>
+    ${isNew?"":'<button class="btn secondary" id="f_del" style="color:#D63A4A;margin-top:10px">Supprimer ce commercial</button>'}
+  `);
+  o.querySelector("#f_niv").onchange=()=>{
+    o.querySelector("#f_datewrap").style.display = $("#f_niv").value==="nouveau" ? "" : "none";
+  };
+  o.querySelector("#f_save").onclick=async()=>{
+    const nom=$("#f_nom").value.trim(); if(!nom){toast("Nom requis",true);return;}
+    const obj=+$("#f_obj").value||0;
+    const niv=$("#f_niv").value;
+    const dDebut = niv==="nouveau" ? (isoToFr($("#f_date").value) || todayFr()) : "";
+    if(isNew){
+      const id=uid();
+      DATA.commerciaux.push({id,nom,email:$("#f_email").value.trim(),password:$("#f_pass").value,
+        contrats:+$("#f_ct").value||0,gaz:+$("#f_gz").value||0,electricite:+$("#f_el").value||0,
+        niveau:niv,dateDebut:dDebut,planningMensuel:{}});
+      if(obj) DATA.objectifsInd[id]=obj;
+    } else {
+      Object.assign(c,{nom,email:$("#f_email").value.trim(),password:$("#f_pass").value,
+        contrats:+$("#f_ct").value||0,gaz:+$("#f_gz").value||0,electricite:+$("#f_el").value||0,
+        niveau:niv,dateDebut:dDebut});
+      DATA.objectifsInd[c.id]=obj;
+    }
+    o.remove(); await save(); render();
+  };
+  const del=o.querySelector("#f_del");
+  if(del) del.onclick=async()=>{
+    if(!confirm("Supprimer "+c.nom+" ?")) return;
+    DATA.commerciaux=DATA.commerciaux.filter(x=>x.id!==c.id);
+    delete DATA.objectifsInd[c.id];
+    o.remove(); await save(); render();
+  };
+}
+
+/* ---------- contract add ---------- */
+function contractSheet(fixedComm, mode){
+  const isAdmin = mode==="admin";
+  const commOptions = DATA.commerciaux.map(c=>`<option value="${esc(c.nom)}">${esc(c.nom)}</option>`).join("");
+  const o=sheet(isAdmin?"Ma vente":"Nouvelle vente",`
+    ${(fixedComm||isAdmin)?"":`<label>Commercial</label><select class="field" id="c_comm">${commOptions}</select>`}
+    <label>Prénom client</label><input class="field" id="c_prenom">
+    <label>Nom client</label><input class="field" id="c_client">
+    <label>Référence</label><input class="field" id="c_ref" placeholder="A-XXXXXXXX">
+    <label>Type</label><select class="field" id="c_type"><option>Électricité</option><option>Gaz</option></select>
+    <label>Statut</label><select class="field" id="c_statut"><option>En attente</option><option>Validé</option><option>Refusé</option></select>
+    <button class="btn" id="c_save">Enregistrer la vente</button>
+  `);
+  o.querySelector("#c_save").onclick=async()=>{
+    const k={ id:uid(),
+      prenom:$("#c_prenom").value.trim(), client:$("#c_client").value.trim(),
+      ref:$("#c_ref").value.trim(), type:$("#c_type").value,
+      statut:$("#c_statut").value, date:todayFr() };
+    if(!k.client){toast("Nom client requis",true);return;}
+    if(isAdmin){
+      DATA.prodAdmin.liste = DATA.prodAdmin.liste||[];
+      DATA.prodAdmin.liste.unshift(k);
+      recomputeAdminProd();
+    } else {
+      k.commercial = fixedComm || $("#c_comm").value;
+      DATA.contrats.unshift(k);
+      bumpComm(k.commercial, k.type, 1);
+    }
+    o.remove(); await save(); render();
+  };
+}
+
+function recomputeAdminProd(){
+  const live = (DATA.prodAdmin.liste||[]).filter(k=>!k.archive);
+  DATA.prodAdmin.contrats = live.length;
+  DATA.prodAdmin.gaz = live.filter(k=>k.type==="Gaz").length;
+  DATA.prodAdmin.electricite = live.filter(k=>k.type!=="Gaz").length;
+}
+
+/* ---------- contract manage (admin) ---------- */
+function openContract(id){
+  const k=DATA.contrats.find(x=>x.id===id); if(!k) return;
+  const o=sheet("Contrat",`
+    <p style="margin:0 0 14px;color:#8C879E;font-size:14px">
+      <b style="color:#1B1830">${esc(k.prenom||"")} ${esc(k.client||"")}</b><br>
+      ${esc(k.type)} · Réf ${esc(k.ref||"—")} · ${esc(k.commercial||"")} · ${esc(k.date||"")}</p>
+    <label>Statut</label>
+    <select class="field" id="k_statut">
+      <option ${k.statut==="En attente"?"selected":""}>En attente</option>
+      <option ${k.statut==="Validé"?"selected":""}>Validé</option>
+      <option ${k.statut==="Refusé"?"selected":""}>Refusé</option>
+    </select>
+    <button class="btn" id="k_save">Mettre à jour</button>
+    <button class="btn secondary" id="k_arch" style="margin-top:10px">Archiver</button>
+    <button class="btn secondary" id="k_del" style="color:#D63A4A;margin-top:10px">Supprimer</button>
+  `);
+  o.querySelector("#k_save").onclick=async()=>{ k.statut=$("#k_statut").value; o.remove(); await save(); render(); };
+  o.querySelector("#k_arch").onclick=async()=>{ k.archive=true; bumpComm(k.commercial,k.type,-1); o.remove(); await save(); render(); };
+  o.querySelector("#k_del").onclick=async()=>{
+    if(!confirm("Supprimer ce contrat ?"))return;
+    bumpComm(k.commercial,k.type,-1);
+    DATA.contrats=DATA.contrats.filter(x=>x.id!==id); o.remove(); await save(); render();
+  };
+}
+
+/* ---------- ma prod manage (admin) ---------- */
+function openAdminContract(id){
+  const k=(DATA.prodAdmin.liste||[]).find(x=>x.id===id); if(!k) return;
+  const o=sheet("Ma vente",`
+    <p style="margin:0 0 14px;color:#8C879E;font-size:14px">
+      <b style="color:#1B1830">${esc(k.prenom||"")} ${esc(k.client||"")}</b><br>
+      ${esc(k.type)} · Réf ${esc(k.ref||"—")} · ${esc(k.date||"")}</p>
+    <label>Statut</label>
+    <select class="field" id="a_statut">
+      <option ${k.statut==="En attente"?"selected":""}>En attente</option>
+      <option ${k.statut==="Validé"?"selected":""}>Validé</option>
+      <option ${k.statut==="Refusé"?"selected":""}>Refusé</option>
+    </select>
+    <button class="btn" id="a_save">Mettre à jour</button>
+    <button class="btn secondary" id="a_del" style="color:#D63A4A;margin-top:10px">Supprimer</button>
+  `);
+  o.querySelector("#a_save").onclick=async()=>{ k.statut=$("#a_statut").value; recomputeAdminProd(); o.remove(); await save(); render(); };
+  o.querySelector("#a_del").onclick=async()=>{
+    if(!confirm("Supprimer cette vente ?"))return;
+    DATA.prodAdmin.liste=DATA.prodAdmin.liste.filter(x=>x.id!==id);
+    recomputeAdminProd(); o.remove(); await save(); render();
+  };
+}
+
+/* ---------- planning edit ---------- */
+function editDay(day){
+  const comm = USER.role==="admin" ? DATA.commerciaux.find(c=>c.id===planningTarget) : DATA.commerciaux.find(c=>c.id===USER.id);
+  if(!comm) return;
+  const mk=monthKey();
+  comm.planningMensuel=comm.planningMensuel||{}; comm.planningMensuel[mk]=comm.planningMensuel[mk]||{};
+  const cur=comm.planningMensuel[mk][day]||"";
+  const locOpts=(DATA.locations||[]).map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join("");
+  const o=sheet("Jour "+day,`
+    <label>Affectation rapide</label>
+    <select class="field" id="p_loc"><option value="">— Lieu —</option>${locOpts}<option value="Jour de repos">Jour de repos</option></select>
+    <label>Horaire</label>
+    <select class="field" id="p_h"><option>9H30-17H30</option><option>9H-17H</option><option>10H-18H</option><option>13H-21H</option></select>
+    <label>Ou texte libre</label>
+    <input class="field" id="p_free" value="${esc(cur)}" placeholder="ex: Carrefour Bègles - 9H30-17H30">
+    <button class="btn" id="p_save">Enregistrer</button>
+  `);
+  o.querySelector("#p_loc").onchange=()=>{
+    const loc=$("#p_loc").value;
+    $("#p_free").value = loc==="Jour de repos" ? "Jour de repos" : (loc? loc+" - "+$("#p_h").value : "");
+  };
+  o.querySelector("#p_h").onchange=()=>{
+    const loc=$("#p_loc").value;
+    if(loc && loc!=="Jour de repos") $("#p_free").value=loc+" - "+$("#p_h").value;
+  };
+  o.querySelector("#p_save").onclick=async()=>{
+    comm.planningMensuel[mk][day]=$("#p_free").value.trim();
+    o.remove(); await save(); render();
+  };
+}
+function fillSelectionSheet(){
+  const comm = USER.role==="admin" ? DATA.commerciaux.find(c=>c.id===planningTarget) : DATA.commerciaux.find(c=>c.id===USER.id);
+  if(!comm || !planSelectedDays.size) return;
+  const mk=monthKey();
+  comm.planningMensuel=comm.planningMensuel||{}; comm.planningMensuel[mk]=comm.planningMensuel[mk]||{};
+  const n = planSelectedDays.size;
+  const locOpts=(DATA.locations||[]).map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join("");
+  const o=sheet(`Remplir ${n} jour${n>1?"s":""}`,`
+    <label>Affectation rapide</label>
+    <select class="field" id="p_loc"><option value="">— Lieu —</option>${locOpts}<option value="Jour de repos">Jour de repos</option></select>
+    <label>Horaire</label>
+    <select class="field" id="p_h"><option>9H30-17H30</option><option>9H-17H</option><option>10H-18H</option><option>13H-21H</option></select>
+    <label>Ou texte libre</label>
+    <input class="field" id="p_free" placeholder="ex: Carrefour Bègles - 9H30-17H30">
+    <button class="btn" id="p_save">Appliquer à ${n} jour${n>1?"s":""}</button>
+  `);
+  o.querySelector("#p_loc").onchange=()=>{
+    const loc=$("#p_loc").value;
+    $("#p_free").value = loc==="Jour de repos" ? "Jour de repos" : (loc? loc+" - "+$("#p_h").value : "");
+  };
+  o.querySelector("#p_h").onchange=()=>{
+    const loc=$("#p_loc").value;
+    if(loc && loc!=="Jour de repos") $("#p_free").value=loc+" - "+$("#p_h").value;
+  };
+  o.querySelector("#p_save").onclick=async()=>{
+    const val=$("#p_free").value.trim();
+    if(!val){toast("Renseigne un lieu ou un texte",true);return;}
+    planSelectedDays.forEach(d=>{ comm.planningMensuel[mk][d]=val; });
+    planSelectedDays=new Set(); planMultiMode=false;
+    o.remove(); await save(); render();
+  };
+}
+
+/* ---------- messages ---------- */
+async function sendMsg(){
+  const txt=$("#msgInput").value.trim(); if(!txt){toast("Message vide",true);return;}
+  const d=new Date();
+  const date=todayFr()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")+":"+String(d.getSeconds()).padStart(2,"0");
+  DATA.messages=DATA.messages||[];
+  DATA.messages.push({id:uid(),nom:USER.nom,role:USER.role,texte:txt,date});
+  await save(); render();
+}
+
+/* ---------- reglages ---------- */
+async function saveObjInd(){
+  document.querySelectorAll("[data-objind]").forEach(inp=>{
+    DATA.objectifsInd[inp.dataset.objind]=+inp.value||0;
+  });
+  await save(); render();
+}
+async function addLoc(){
+  const v=$("#newLoc").value.trim(); if(!v)return;
+  DATA.locations.push(v); await save(); render();
+}
+</script>
+</body>
+</html>
